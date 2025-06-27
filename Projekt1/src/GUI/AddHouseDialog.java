@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
-// Usunięto import java.util.function.Consumer, bo już go nie używamy
 
 public class AddHouseDialog extends JDialog {
     private JTextField nameField;
@@ -23,12 +22,12 @@ public class AddHouseDialog extends JDialog {
 
     private House newHouse;
 
-    // --- Kolory do schematu UI ---
-    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Stalowo-niebieski
-    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); // Alice Blue (jasny)
-    private static final Color ACCENT_COLOR = new Color(100, 149, 237); // Cornflower Blue
-    private static final Color TEXT_COLOR = new Color(40, 40, 40); // Ciemny szary
-    private static final Color BORDER_COLOR = new Color(170, 170, 170); // Szary do obramowań
+
+    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); 
+    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); 
+    private static final Color ACCENT_COLOR = new Color(100, 149, 237); 
+    private static final Color TEXT_COLOR = new Color(40, 40, 40); 
+    private static final Color BORDER_COLOR = new Color(170, 170, 170); 
 
     public AddHouseDialog(JFrame parent) {
         super(parent, "Add New House", true);
@@ -63,7 +62,7 @@ public class AddHouseDialog extends JDialog {
                     BorderFactory.createEmptyBorder(8, 10, 8, 10)
             ));
             field.setPreferredSize(new Dimension(field.getPreferredSize().width, 45));
-            field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45)); // Dodatkowe zabezpieczenie dla wysokości
+            field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45)); 
         }
 
         JComboBox[] comboBoxes = {houseTypeComboBox, houseColorComboBox};
@@ -76,7 +75,7 @@ public class AddHouseDialog extends JDialog {
                     BorderFactory.createEmptyBorder(8, 10, 8, 10)
             ));
             comboBox.setPreferredSize(new Dimension(comboBox.getPreferredSize().width, 45));
-            comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45)); // Dodatkowe zabezpieczenie dla wysokości
+            comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45)); 
             comboBox.setRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -103,8 +102,7 @@ public class AddHouseDialog extends JDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 15, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0; // Pola rozciągają się w poziomie
-        // gbc.anchor = GridBagConstraints.WEST; // Domyślne wyrównanie etykiet do lewej
+        gbc.weightx = 1.0; 
 
         Font labelFont = new Font("Segoe UI", Font.BOLD, 22);
         Font dialogTitleFont = new Font("Segoe UI", Font.BOLD, 36);
@@ -119,18 +117,18 @@ public class AddHouseDialog extends JDialog {
         int row = 0;
 
         // House Name
-        gbc.gridx = 0; // Kolumna dla etykiety
-        gbc.gridy = row; // Aktualny rząd
-        gbc.weighty = 0.0; // Ten rząd nie powinien się rozpychać pionowo
-        gbc.anchor = GridBagConstraints.WEST; // Etykieta wyrównana do lewej
+        gbc.gridx = 0; 
+        gbc.gridy = row; 
+        gbc.weighty = 0.0; 
+        gbc.anchor = GridBagConstraints.WEST; 
         JLabel nameLabel = new JLabel("House Name:");
         nameLabel.setFont(labelFont);
         nameLabel.setForeground(TEXT_COLOR);
         formPanel.add(nameLabel, gbc);
 
-        gbc.gridx = 1; // Kolumna dla pola
-        gbc.gridy = row; // Ten sam rząd
-        gbc.weighty = 0.0; // Pole też nie powinno się rozpychać pionowo
+        gbc.gridx = 1; 
+        gbc.gridy = row; 
+        gbc.weighty = 0.0; 
         formPanel.add(nameField, gbc);
         row++;
 
@@ -214,12 +212,12 @@ public class AddHouseDialog extends JDialog {
         formPanel.add(houseColorComboBox, gbc);
         row++;
 
-        // Dodaj puste miejsce na końcu, aby "zepchnąć" resztę elementów ku górze
+        
         gbc.gridx = 0;
         gbc.gridy = row;
-        gbc.gridwidth = 2; // Zajmuje obie kolumny
-        gbc.weighty = 1.0; // Ten "niewidzialny" komponent zabiera całą resztę pionowej przestrzeni
-        formPanel.add(Box.createVerticalGlue(), gbc); // Użyj Box.createVerticalGlue()
+        gbc.gridwidth = 2; 
+        gbc.weighty = 1.0; 
+        formPanel.add(Box.createVerticalGlue(), gbc); 
 
         add(formPanel, BorderLayout.CENTER);
 
@@ -245,7 +243,7 @@ public class AddHouseDialog extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // --- Metoda pomocnicza do tworzenia stylizowanych przycisków ---
+    
     private JButton createStyledButton(String text, Font font, Color normalBg, Color hoverBg, Color textCol) {
         JButton button = new JButton(text) {
             private final int CORNER_RADIUS = 20;
@@ -287,7 +285,7 @@ public class AddHouseDialog extends JDialog {
 
             @Override
             public void paintBorder(Graphics g) {
-                // Nie rysujemy domyślnego obramowania
+                
             }
 
             @Override
