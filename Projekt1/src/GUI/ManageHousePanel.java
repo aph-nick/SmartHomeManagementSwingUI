@@ -13,28 +13,26 @@ import java.awt.geom.RoundRectangle2D;
 public class ManageHousePanel extends JPanel {
     private final SmartHomeSystem system;
     private final SmartHomeGUI parentFrame;
-    private final House selectedHouse; // Dom, którym aktualnie zarządzamy
+    private final House selectedHouse;
 
     private JLabel houseNameLabel;
     private JButton manageRoomsButton;
     private JButton backButton;
     private JLabel statusLabel;
 
-    // --- Kolory do schematu UI (powtórzone dla samodzielności klasy) ---
-    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Stalowo-niebieski
-    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); // Alice Blue (jasny)
-    private static final Color ACCENT_COLOR = new Color(100, 149, 237); // Cornflower Blue
-    private static final Color TEXT_COLOR = new Color(40, 40, 40); // Ciemny szary
-    private static final Color BORDER_COLOR = new Color(170, 170, 170); // Szary do obramowań
+    private static final Color PRIMARY_COLOR = new Color(70, 130, 180);
+    private static final Color SECONDARY_COLOR = new Color(240, 248, 255);
+    private static final Color ACCENT_COLOR = new Color(100, 149, 237);
+    private static final Color TEXT_COLOR = new Color(40, 40, 40);
+    private static final Color BORDER_COLOR = new Color(170, 170, 170);
 
     public ManageHousePanel(SmartHomeSystem system, SmartHomeGUI parentFrame) {
         this.system = system;
         this.parentFrame = parentFrame;
-        this.selectedHouse = system.getSelectedHouse(); // Pobieramy wybrany dom z systemu
+        this.selectedHouse = system.getSelectedHouse();
 
         if (selectedHouse == null) {
             JOptionPane.showMessageDialog(this, "No house selected for management. Returning to main menu.", "Error", JOptionPane.ERROR_MESSAGE);
-            // Wywołaj showMainPanel na EDT, aby uniknąć problemów z wątkami Swing
             SwingUtilities.invokeLater(parentFrame::showMainPanel);
             return;
         }
@@ -43,59 +41,52 @@ public class ManageHousePanel extends JPanel {
     }
 
     private void initializeUI() {
-        // Zmieniamy na GridBagLayout dla większej elastyczności
         setLayout(new GridBagLayout());
-        setBackground(SECONDARY_COLOR); // Ustawienie tła panelu
-        setBorder(new EmptyBorder(40, 50, 40, 50)); // Dodatkowy padding wokół panelu
+        setBackground(SECONDARY_COLOR);
+        setBorder(new EmptyBorder(40, 50, 40, 50));
         setSize(850, 850);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(20, 10, 20, 10); // Większe marginesy między komponentami
+        gbc.insets = new Insets(20, 10, 20, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0; // Rozciągnij komponenty w poziomie
+        gbc.weightx = 1.0;
 
-        Font titleFont = new Font("Segoe UI", Font.BOLD, 40); // Większa, nowoczesna czcionka
-        Font buttonFont = new Font("Segoe UI", Font.BOLD, 28); // Większa, nowoczesna czcionka
-        Font statusFont = new Font("Segoe UI", Font.ITALIC, 24); // Nowoczesna czcionka dla statusu
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 40);
+        Font buttonFont = new Font("Segoe UI", Font.BOLD, 28);
+        Font statusFont = new Font("Segoe UI", Font.ITALIC, 24);
 
-        // House Name Label
         houseNameLabel = new JLabel("Managing House: " + selectedHouse.getName(), SwingConstants.CENTER);
         houseNameLabel.setFont(titleFont);
-        houseNameLabel.setForeground(PRIMARY_COLOR.darker()); // Ciemniejszy odcień primary color
+        houseNameLabel.setForeground(PRIMARY_COLOR.darker());
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 1; // Zajmuje całą szerokość w pojedynczej kolumnie
-        gbc.ipady = 30; // Internal padding vertical
+        gbc.gridwidth = 1;
+        gbc.ipady = 30;
         add(houseNameLabel, gbc);
 
-        gbc.ipady = 15; // Resetuj padding pionowy dla przycisków
+        gbc.ipady = 15;
 
-        // Przyciski (używamy createStyledButton)
         manageRoomsButton = createStyledButton("1. Manage Rooms", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
-        backButton = createStyledButton("3. Back to Main Menu", buttonFont, Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE); // Inny kolor dla przycisku Wstecz
+        backButton = createStyledButton("3. Back to Main Menu", buttonFont, Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE);
 
         gbc.gridy = 1; add(manageRoomsButton, gbc);
         gbc.gridy = 2; add(backButton, gbc);
 
-        // Status Label
         statusLabel = new JLabel("Welcome to " + selectedHouse.getName() + " management!", SwingConstants.CENTER);
         statusLabel.setFont(statusFont);
         statusLabel.setForeground(TEXT_COLOR);
 
         gbc.gridy = 4;
-        gbc.ipady = 20; // Trochę więcej paddingu dla statusu
+        gbc.ipady = 20;
         add(statusLabel, gbc);
 
-        // Dodanie słuchaczy zdarzeń
         manageRoomsButton.addActionListener(e -> manageRooms());
         backButton.addActionListener(e -> parentFrame.showMainPanel());
     }
 
     private void manageRooms() {
         statusLabel.setText("Navigating to room management for: " + selectedHouse.getName());
-        // Przełączamy się na ManageRoomsPanel
-        // Przekazujemy 'this' (ManageHousePanel) jako backPanel, aby móc wrócić
         parentFrame.showPanel(new ManageRoomsPanel(system, parentFrame, this, selectedHouse));
     }
 
@@ -104,11 +95,9 @@ public class ManageHousePanel extends JPanel {
         statusLabel.setText(message);
     }
 
-    // --- Metoda pomocnicza do tworzenia stylizowanych przycisków ---
-    // (Przeniesiona z innych klas GUI, aby zapewnić spójność)
     private JButton createStyledButton(String text, Font font, Color normalBg, Color hoverBg, Color textCol) {
         JButton button = new JButton(text) {
-            private final int CORNER_RADIUS = 20; // Stały promień zaokrąglenia
+            private final int CORNER_RADIUS = 20;
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -119,7 +108,6 @@ public class ManageHousePanel extends JPanel {
                 int width = getWidth();
                 int height = getHeight();
 
-                // Rysowanie cienia
                 int shadowOffset = 3;
                 Color shadowColor = new Color(0, 0, 0, 40);
                 if (getModel().isPressed()) {
@@ -129,15 +117,13 @@ public class ManageHousePanel extends JPanel {
                 g2.setColor(shadowColor);
                 g2.fillRoundRect(shadowOffset, shadowOffset, width - shadowOffset, height - shadowOffset, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tła przycisku
                 if (getModel().isRollover()) {
-                    g2.setColor(hoverBg); // Kolor przy najechaniu
+                    g2.setColor(hoverBg);
                 } else {
-                    g2.setColor(normalBg); // Domyślny kolor
+                    g2.setColor(normalBg);
                 }
                 g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tekstu
                 FontMetrics metrics = g2.getFontMetrics(getFont());
                 int x = (width - metrics.stringWidth(getText())) / 2;
                 int y = ((height - metrics.getHeight()) / 2) + metrics.getAscent();
@@ -150,7 +136,6 @@ public class ManageHousePanel extends JPanel {
 
             @Override
             public void paintBorder(Graphics g) {
-                // Nie rysujemy domyślnego obramowania
             }
 
             @Override
