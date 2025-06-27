@@ -5,7 +5,7 @@ import Enums.RoomType;
 import House.Room;
 import House.SmartHomeSystem;
 import Devices.SmartDevice;
-import House.House; // Upewnij się, że masz ten import, jeśli House.House jest oddzielną klasą
+import House.House;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 public class ManageRoomsPanel extends JPanel {
     private final SmartHomeSystem system;
     private final SmartHomeGUI parentFrame;
-    private final ManageHousePanel backPanel; // Panel, do którego wracamy
-    private final House selectedHouse; // Dom, którego pokojami zarządzamy
+    private final ManageHousePanel backPanel;
+    private final House selectedHouse;
 
     private JLabel houseNameLabel;
     private JButton addRoomButton;
@@ -32,19 +32,17 @@ public class ManageRoomsPanel extends JPanel {
     private JButton backButton;
     private JLabel statusLabel;
 
-    // --- Kolory do schematu UI (powtórzone dla samodzielności klasy) ---
-    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Stalowo-niebieski
-    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); // Alice Blue (jasny)
-    private static final Color ACCENT_COLOR = new Color(100, 149, 237); // Cornflower Blue
-    private static final Color TEXT_COLOR = new Color(40, 40, 40); // Ciemny szary
-    private static final Color BORDER_COLOR = new Color(170, 170, 170); // Szary do obramowań
+    private static final Color PRIMARY_COLOR = new Color(70, 130, 180);
+    private static final Color SECONDARY_COLOR = new Color(240, 248, 255);
+    private static final Color ACCENT_COLOR = new Color(100, 149, 237);
+    private static final Color TEXT_COLOR = new Color(40, 40, 40);
+    private static final Color BORDER_COLOR = new Color(170, 170, 170);
 
-    // Zaktualizowany konstruktor, aby przyjmować selectedHouse
     public ManageRoomsPanel(SmartHomeSystem system, SmartHomeGUI parentFrame, ManageHousePanel backPanel, House selectedHouse) {
         this.system = system;
         this.parentFrame = parentFrame;
         this.backPanel = backPanel;
-        this.selectedHouse = selectedHouse; // Teraz selectedHouse jest przekazywany
+        this.selectedHouse = selectedHouse;
 
         if (selectedHouse == null) {
             JOptionPane.showMessageDialog(this, "No house selected. Returning to main menu.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -56,40 +54,37 @@ public class ManageRoomsPanel extends JPanel {
     }
 
     private void initializeUI() {
-        // Zmieniamy na GridBagLayout dla większej elastyczności
         setLayout(new GridBagLayout());
-        setBackground(SECONDARY_COLOR); // Ustawienie tła panelu
-        setBorder(new EmptyBorder(40, 50, 40, 50)); // Dodatkowy padding wokół panelu
+        setBackground(SECONDARY_COLOR);
+        setBorder(new EmptyBorder(40, 50, 40, 50));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 10, 15, 10); // Większe marginesy między komponentami
+        gbc.insets = new Insets(15, 10, 15, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0; // Rozciągnij komponenty w poziomie
+        gbc.weightx = 1.0;
 
         Font titleFont = new Font("Segoe UI", Font.BOLD, 36);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 24);
         Font statusFont = new Font("Segoe UI", Font.ITALIC, 20);
 
-        // House Name Label
         houseNameLabel = new JLabel("Rooms in: " + selectedHouse.getName(), SwingConstants.CENTER);
         houseNameLabel.setFont(titleFont);
-        houseNameLabel.setForeground(PRIMARY_COLOR.darker()); // Używamy ciemniejszego primary color
+        houseNameLabel.setForeground(PRIMARY_COLOR.darker());
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 1; // Zajmuje całą szerokość w pojedynczej kolumnie
-        gbc.ipady = 20; // Internal padding vertical
+        gbc.gridwidth = 1;
+        gbc.ipady = 20;
         add(houseNameLabel, gbc);
 
-        gbc.ipady = 10; // Resetuj padding pionowy dla przycisków
+        gbc.ipady = 10;
 
-        // Przyciski (używamy createStyledButton)
         addRoomButton = createStyledButton("1. Add Room", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         editRoomButton = createStyledButton("2. Edit Room", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         removeRoomButton = createStyledButton("3. Remove Room", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         listRoomsButton = createStyledButton("4. List Rooms", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         manageDevicesInRoomButton = createStyledButton("5. Manage Devices in a Room", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
-        backButton = createStyledButton("6. Back to House Management", buttonFont, Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE); // Inny kolor dla przycisku Wstecz
+        backButton = createStyledButton("6. Back to House Management", buttonFont, Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE);
 
         gbc.gridy = 1; add(addRoomButton, gbc);
         gbc.gridy = 2; add(editRoomButton, gbc);
@@ -98,16 +93,14 @@ public class ManageRoomsPanel extends JPanel {
         gbc.gridy = 5; add(manageDevicesInRoomButton, gbc);
         gbc.gridy = 6; add(backButton, gbc);
 
-        // Status Label
         statusLabel = new JLabel("Manage rooms for " + selectedHouse.getName(), SwingConstants.CENTER);
         statusLabel.setFont(statusFont);
         statusLabel.setForeground(TEXT_COLOR);
 
         gbc.gridy = 7;
-        gbc.ipady = 15; // Trochę więcej paddingu dla statusu
+        gbc.ipady = 15;
         add(statusLabel, gbc);
 
-        // Dodanie słuchaczy zdarzeń
         addRoomButton.addActionListener(e -> addRoom());
         editRoomButton.addActionListener(e -> editRoom());
         removeRoomButton.addActionListener(e -> removeRoom());
@@ -116,17 +109,12 @@ public class ManageRoomsPanel extends JPanel {
         backButton.addActionListener(e -> parentFrame.showPanel(backPanel));
     }
 
-    // --- Metody obsługujące akcje ---
-
     private void addRoom() {
-        // Stylowanie dla AddRoomDialog (przykładowe, zakładając istnienie klasy)
-        // Musisz upewnić się, że AddRoomDialog ma podobne ustawienia kolorów i czcionek w swojej implementacji
         UIManager.put("OptionPane.background", SECONDARY_COLOR);
         UIManager.put("Panel.background", SECONDARY_COLOR);
         UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 18));
         UIManager.put("OptionPane.buttonFont", new Font("Segoe UI", Font.BOLD, 16));
 
-        // Assuming AddRoomDialog exists and its components are styled internally
         AddRoomDialog dialog = new AddRoomDialog(parentFrame);
         dialog.setVisible(true);
 
@@ -155,15 +143,14 @@ public class ManageRoomsPanel extends JPanel {
         Font dialogInputFont = new Font("Segoe UI", Font.PLAIN, 18);
         Font dialogLabelFont = new Font("Segoe UI", Font.BOLD, 18);
 
-        // Użyj DefaultListCellRenderer, aby ostylować elementy w ComboBox
         DefaultListCellRenderer renderer = new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 label.setFont(dialogInputFont);
-                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Dodaj padding
+                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
                 if (isSelected) {
-                    label.setBackground(ACCENT_COLOR); // Kolor zaznaczenia
+                    label.setBackground(ACCENT_COLOR);
                     label.setForeground(Color.WHITE);
                 } else {
                     label.setBackground(Color.WHITE);
@@ -217,7 +204,6 @@ public class ManageRoomsPanel extends JPanel {
 
             if (roomToEditOpt.isPresent()) {
                 Room roomToEdit = roomToEditOpt.get();
-                // Assuming EditRoomDialog exists and its components are styled internally
                 EditRoomDialog dialog = new EditRoomDialog(parentFrame, roomToEdit);
                 dialog.setVisible(true);
 
@@ -248,9 +234,9 @@ public class ManageRoomsPanel extends JPanel {
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 label.setFont(dialogInputFont);
-                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Dodaj padding
+                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
                 if (isSelected) {
-                    label.setBackground(ACCENT_COLOR); // Kolor zaznaczenia
+                    label.setBackground(ACCENT_COLOR);
                     label.setForeground(Color.WHITE);
                 } else {
                     label.setBackground(Color.WHITE);
@@ -311,8 +297,6 @@ public class ManageRoomsPanel extends JPanel {
                         JOptionPane.WARNING_MESSAGE);
 
                 if (confirmResult == JOptionPane.YES_OPTION) {
-                    // Przed usunięciem pokoju, upewnij się, że wszystkie urządzenia w nim są odłączone/zatrzymane.
-                    // To jest kluczowe dla integralności danych i symulacji.
                     for (SmartDevice device : roomToRemove.getDevices()) {
                         try {
                             if (device instanceof Interfaces.Pluggable pluggableDevice) {
@@ -324,12 +308,11 @@ public class ManageRoomsPanel extends JPanel {
                             }
                             device.stopSimulation();
                         } catch (UnsupportedOperationException e) {
-                            // Ignoruj, jeśli urządzenie nie obsługuje symulacji/odłączania
                         } catch (Exception e) {
                             Logger.DeviceLogger.logEvent(device, "ERROR", "Failed to clean up device " + device.getName() + " during room removal: " + e.getMessage());
                         }
                     }
-                    roomToRemove.getDevices().clear(); // Usuń wszystkie urządzenia z pokoju przed usunięciem pokoju
+                    roomToRemove.getDevices().clear();
 
                     selectedHouse.removeRoom(roomToRemove);
                     statusLabel.setText("Room '" + selectedRoomName + "' removed successfully!");
@@ -346,7 +329,6 @@ public class ManageRoomsPanel extends JPanel {
         List<Room> rooms = selectedHouse.getRooms();
         if (rooms.isEmpty()) {
             statusLabel.setText("No rooms in " + selectedHouse.getName() + ".");
-            // Ustawianie stylów JOptionPane dla komunikatu
             UIManager.put("OptionPane.background", SECONDARY_COLOR);
             UIManager.put("Panel.background", SECONDARY_COLOR);
             UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 18));
@@ -354,7 +336,6 @@ public class ManageRoomsPanel extends JPanel {
 
             JOptionPane.showMessageDialog(this, "No rooms available in " + selectedHouse.getName() + ".", "Info", JOptionPane.INFORMATION_MESSAGE);
 
-            // Przywracanie domyślnych stylów
             UIManager.put("OptionPane.background", null);
             UIManager.put("Panel.background", null);
             UIManager.put("OptionPane.messageFont", null);
@@ -366,13 +347,13 @@ public class ManageRoomsPanel extends JPanel {
         for (int i = 0; i < rooms.size(); i++) {
             Room room = rooms.get(i);
             sb.append((i + 1)).append(". Name: ").append(room.getName()).append("\n")
-                    .append("   Type: ").append(room.getRoomType()).append("\n")
-                    .append("   Area: ").append(String.format("%.2f", room.getArea())).append(" sq. meters\n")
-                    .append("   Devices: ").append(room.getDevices().size()).append("\n");
+                    .append("    Type: ").append(room.getRoomType()).append("\n")
+                    .append("    Area: ").append(String.format("%.2f", room.getArea())).append(" sq. meters\n")
+                    .append("    Devices: ").append(room.getDevices().size()).append("\n");
             if (!room.getDevices().isEmpty()) {
-                sb.append("     Devices in room:\n");
+                sb.append("      Devices in room:\n");
                 for (SmartDevice device : room.getDevices()) {
-                    sb.append("       - ").append(device.getName()).append(" (ID: ").append(device.getId()).append(", On: ").append(device.isOn()).append(")\n");
+                    sb.append("        - ").append(device.getName()).append(" (ID: ").append(device.getId()).append(", On: ").append(device.isOn()).append(")\n");
                 }
             }
             sb.append("\n");
@@ -380,24 +361,23 @@ public class ManageRoomsPanel extends JPanel {
         statusLabel.setText("Rooms listed for " + selectedHouse.getName() + ".");
 
         JTextArea textArea = new JTextArea(sb.toString());
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 16)); // Czcionka dla listy
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 16));
         textArea.setEditable(false);
-        textArea.setBackground(SECONDARY_COLOR.brighter()); // Jasne tło dla text area
-        textArea.setForeground(TEXT_COLOR); // Ciemny tekst
+        textArea.setBackground(SECONDARY_COLOR.brighter());
+        textArea.setForeground(TEXT_COLOR);
+        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setPreferredSize(new Dimension(850, 850)); // Większy rozmiar okna listy
-        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1)); // Delikatne obramowanie
+        scrollPane.setPreferredSize(new Dimension(850, 850));
+        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
 
-        // Stylowanie JOptionPane dla wyświetlania listy
         UIManager.put("OptionPane.background", SECONDARY_COLOR);
         UIManager.put("Panel.background", SECONDARY_COLOR);
-        UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 16)); // Czcionka dla wiadomości w oknie
-        UIManager.put("OptionPane.buttonFont", new Font("Segoe UI", Font.BOLD, 16)); // Czcionka dla przycisków w oknie
+        UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 16));
+        UIManager.put("OptionPane.buttonFont", new Font("Segoe UI", Font.BOLD, 16));
 
         JOptionPane.showMessageDialog(this, scrollPane, "Rooms in " + selectedHouse.getName(), JOptionPane.PLAIN_MESSAGE);
 
-        // Przywracanie domyślnych stylów
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageFont", null);
@@ -405,12 +385,10 @@ public class ManageRoomsPanel extends JPanel {
     }
 
 
-    // Ta metoda zastąpi starą listDevicesInRoom i będzie przechodzić do ManageDevicesPanel
     private void manageDevicesInRoom() {
         List<Room> rooms = selectedHouse.getRooms();
         if (rooms.isEmpty()) {
             statusLabel.setText("No rooms available to manage devices in.");
-            // Ustawianie stylów JOptionPane dla komunikatu
             UIManager.put("OptionPane.background", SECONDARY_COLOR);
             UIManager.put("Panel.background", SECONDARY_COLOR);
             UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 18));
@@ -418,7 +396,6 @@ public class ManageRoomsPanel extends JPanel {
 
             JOptionPane.showMessageDialog(this, "No rooms available. Please add a room first.", "Info", JOptionPane.INFORMATION_MESSAGE);
 
-            // Przywracanie domyślnych stylów
             UIManager.put("OptionPane.background", null);
             UIManager.put("Panel.background", null);
             UIManager.put("OptionPane.messageFont", null);
@@ -429,15 +406,14 @@ public class ManageRoomsPanel extends JPanel {
         Font dialogInputFont = new Font("Segoe UI", Font.PLAIN, 18);
         Font dialogLabelFont = new Font("Segoe UI", Font.BOLD, 18);
 
-        // Użyj DefaultListCellRenderer, aby ostylować elementy w ComboBox
         DefaultListCellRenderer renderer = new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 label.setFont(dialogInputFont);
-                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Dodaj padding
+                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
                 if (isSelected) {
-                    label.setBackground(ACCENT_COLOR); // Kolor zaznaczenia
+                    label.setBackground(ACCENT_COLOR);
                     label.setForeground(Color.WHITE);
                 } else {
                     label.setBackground(Color.WHITE);
@@ -491,7 +467,6 @@ public class ManageRoomsPanel extends JPanel {
             if (selectedRoomOpt.isPresent()) {
                 Room roomForDevices = selectedRoomOpt.get();
                 statusLabel.setText("Navigating to device management for room: " + roomForDevices.getName());
-                // Przełączamy się na ManageDevicesPanel
                 parentFrame.showPanel(new ManageDevicesPanel(system, parentFrame, this, roomForDevices));
             }
         } else {
@@ -499,11 +474,9 @@ public class ManageRoomsPanel extends JPanel {
         }
     }
 
-    // --- Metoda pomocnicza do tworzenia stylizowanych przycisków ---
-    // (Przeniesiona z innych klas GUI, aby zapewnić spójność)
     private JButton createStyledButton(String text, Font font, Color normalBg, Color hoverBg, Color textCol) {
         JButton button = new JButton(text) {
-            private final int CORNER_RADIUS = 20; // Stały promień zaokrąglenia
+            private final int CORNER_RADIUS = 20;
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -514,7 +487,6 @@ public class ManageRoomsPanel extends JPanel {
                 int width = getWidth();
                 int height = getHeight();
 
-                // Rysowanie cienia
                 int shadowOffset = 3;
                 Color shadowColor = new Color(0, 0, 0, 40);
                 if (getModel().isPressed()) {
@@ -524,15 +496,13 @@ public class ManageRoomsPanel extends JPanel {
                 g2.setColor(shadowColor);
                 g2.fillRoundRect(shadowOffset, shadowOffset, width - shadowOffset, height - shadowOffset, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tła przycisku
                 if (getModel().isRollover()) {
-                    g2.setColor(hoverBg); // Kolor przy najechaniu
+                    g2.setColor(hoverBg);
                 } else {
-                    g2.setColor(normalBg); // Domyślny kolor
+                    g2.setColor(normalBg);
                 }
                 g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tekstu
                 FontMetrics metrics = g2.getFontMetrics(getFont());
                 int x = (width - metrics.stringWidth(getText())) / 2;
                 int y = ((height - metrics.getHeight()) / 2) + metrics.getAscent();
@@ -545,7 +515,6 @@ public class ManageRoomsPanel extends JPanel {
 
             @Override
             public void paintBorder(Graphics g) {
-                // Nie rysujemy domyślnego obramowania
             }
 
             @Override
