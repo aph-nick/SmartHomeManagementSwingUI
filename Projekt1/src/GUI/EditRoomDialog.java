@@ -8,7 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D; // Ważne: import dla RoundRectangle2D
+import java.awt.geom.RoundRectangle2D;
 import java.util.function.Consumer;
 
 public class EditRoomDialog extends JDialog {
@@ -20,24 +20,22 @@ public class EditRoomDialog extends JDialog {
     private Room roomToEdit;
     private boolean updated = false;
 
-    // --- Kolory do schematu UI (powtórzone dla samodzielności klasy) ---
-    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Stalowo-niebieski
-    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); // Alice Blue (jasny)
-    private static final Color ACCENT_COLOR = new Color(100, 149, 237); // Cornflower Blue
-    private static final Color TEXT_COLOR = new Color(40, 40, 40); // Ciemny szary
-    private static final Color BORDER_COLOR = new Color(170, 170, 170); // Szary do obramowań
+    private static final Color PRIMARY_COLOR = new Color(70, 130, 180);
+    private static final Color SECONDARY_COLOR = new Color(240, 248, 255);
+    private static final Color ACCENT_COLOR = new Color(100, 149, 237);
+    private static final Color TEXT_COLOR = new Color(40, 40, 40);
+    private static final Color BORDER_COLOR = new Color(170, 170, 170);
 
     public EditRoomDialog(JFrame parent, Room roomToEdit) {
         super(parent, "Edit Room: " + roomToEdit.getName(), true);
         this.roomToEdit = roomToEdit;
 
-        // Zwiększamy rozmiar dialogu
-        setSize(850, 850); // Większy rozmiar
-        setMinimumSize(new Dimension(600, 450)); // Minimalny rozmiar
+        setSize(850, 850);
+        setMinimumSize(new Dimension(600, 450));
 
-        setLayout(new BorderLayout(25, 25)); // Zwiększono odstępy
+        setLayout(new BorderLayout(25, 25));
         setLocationRelativeTo(parent);
-        getContentPane().setBackground(SECONDARY_COLOR); // Tło dialogu
+        getContentPane().setBackground(SECONDARY_COLOR);
 
         initComponents();
         populateFields();
@@ -45,15 +43,13 @@ public class EditRoomDialog extends JDialog {
     }
 
     private void initComponents() {
-        // Ustawienie większej czcionki dla wszystkich komponentów wejściowych
-        Font inputFont = new Font("Segoe UI", Font.PLAIN, 20); // Nowocześniejsza czcionka
+        Font inputFont = new Font("Segoe UI", Font.PLAIN, 20);
 
         nameField = new JTextField(20);
         roomTypeComboBox = new JComboBox<>(RoomType.values());
         lengthField = new JTextField(10);
         widthField = new JTextField(10);
 
-        // Stylowanie pól tekstowych i ComboBoxów
         JTextField[] textFields = {nameField, lengthField, widthField};
         for (JTextField field : textFields) {
             field.setFont(inputFont);
@@ -61,20 +57,20 @@ public class EditRoomDialog extends JDialog {
             field.setForeground(TEXT_COLOR);
             field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(BORDER_COLOR, 1),
-                    BorderFactory.createEmptyBorder(8, 10, 8, 10) // Wewnętrzny padding
+                    BorderFactory.createEmptyBorder(8, 10, 8, 10)
             ));
         }
 
         roomTypeComboBox.setFont(inputFont);
         roomTypeComboBox.setBackground(Color.WHITE);
         roomTypeComboBox.setForeground(TEXT_COLOR);
-        roomTypeComboBox.setRenderer(new DefaultListCellRenderer() { // Poprawienie renderera dla wyglądu
+        roomTypeComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Dodaj padding do elementów listy
+                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
                 if (isSelected) {
-                    label.setBackground(ACCENT_COLOR); // Kolor zaznaczenia
+                    label.setBackground(ACCENT_COLOR);
                     label.setForeground(Color.WHITE);
                 } else {
                     label.setBackground(Color.WHITE);
@@ -95,54 +91,48 @@ public class EditRoomDialog extends JDialog {
     private void createLayout() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(SECONDARY_COLOR);
-        formPanel.setBorder(new EmptyBorder(30, 30, 30, 30)); // Dodatkowy padding wokół panelu formularza
+        formPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(18, 15, 18, 15); // Zwiększone marginesy
+        gbc.insets = new Insets(18, 15, 18, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0; // Rozciągnij pola w poziomie
+        gbc.weightx = 1.0;
 
-        Font labelFont = new Font("Segoe UI", Font.BOLD, 20); // Czcionka dla etykiet
-        Font dialogTitleFont = new Font("Segoe UI", Font.BOLD, 34); // Czcionka dla tytułu dialogu
+        Font labelFont = new Font("Segoe UI", Font.BOLD, 20);
+        Font dialogTitleFont = new Font("Segoe UI", Font.BOLD, 34);
 
-        // Nagłówek dialogu
         JLabel dialogTitle = new JLabel("Edit Room: " + roomToEdit.getName(), SwingConstants.CENTER);
         dialogTitle.setFont(dialogTitleFont);
         dialogTitle.setForeground(PRIMARY_COLOR.darker());
-        dialogTitle.setBorder(new EmptyBorder(20, 0, 30, 0)); // Padding na górze i dole
+        dialogTitle.setBorder(new EmptyBorder(20, 0, 30, 0));
 
         add(dialogTitle, BorderLayout.NORTH);
 
-        // Helper do dodawania etykiet z odpowiednią czcionką i kolorem
         Consumer<String> addLabel = (text) -> {
             JLabel label = new JLabel(text);
             label.setFont(labelFont);
-            label.setForeground(TEXT_COLOR); // Kolor tekstu dla etykiet
+            label.setForeground(TEXT_COLOR);
             formPanel.add(label, gbc);
         };
 
-        // Etykieta i pole Nazwa Pokoju
         gbc.gridx = 0;
         gbc.gridy = 0;
         addLabel.accept("Room Name:");
         gbc.gridx = 1;
         formPanel.add(nameField, gbc);
 
-        // Etykieta i ComboBox Typ Pokoju
         gbc.gridx = 0;
         gbc.gridy = 1;
         addLabel.accept("Room Type:");
         gbc.gridx = 1;
         formPanel.add(roomTypeComboBox, gbc);
 
-        // Etykieta i pole Długość
         gbc.gridx = 0;
         gbc.gridy = 2;
         addLabel.accept("Length [meters]:");
         gbc.gridx = 1;
         formPanel.add(lengthField, gbc);
 
-        // Etykieta i pole Szerokość
         gbc.gridx = 0;
         gbc.gridy = 3;
         addLabel.accept("Width [meters]:");
@@ -151,10 +141,9 @@ public class EditRoomDialog extends JDialog {
 
         add(formPanel, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20)); // Centrowanie przycisków, większe odstępy
-        buttonPanel.setBackground(SECONDARY_COLOR); // Tło panelu przycisków
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
+        buttonPanel.setBackground(SECONDARY_COLOR);
 
-        // Używamy metody createStyledButton
         JButton saveButton = createStyledButton("Save Changes", new Font("Segoe UI", Font.BOLD, 22), PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         JButton cancelButton = createStyledButton("Cancel", new Font("Segoe UI", Font.BOLD, 22), Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE);
 
@@ -175,11 +164,9 @@ public class EditRoomDialog extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // --- Metoda pomocnicza do tworzenia stylizowanych przycisków ---
-    // (Przeniesiona z innych klas GUI, aby zapewnić spójność)
     private JButton createStyledButton(String text, Font font, Color normalBg, Color hoverBg, Color textCol) {
         JButton button = new JButton(text) {
-            private final int CORNER_RADIUS = 20; // Stały promień zaokrąglenia
+            private final int CORNER_RADIUS = 20;
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -190,7 +177,6 @@ public class EditRoomDialog extends JDialog {
                 int width = getWidth();
                 int height = getHeight();
 
-                // Rysowanie cienia
                 int shadowOffset = 3;
                 Color shadowColor = new Color(0, 0, 0, 40);
                 if (getModel().isPressed()) {
@@ -200,15 +186,13 @@ public class EditRoomDialog extends JDialog {
                 g2.setColor(shadowColor);
                 g2.fillRoundRect(shadowOffset, shadowOffset, width - shadowOffset, height - shadowOffset, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tła przycisku
                 if (getModel().isRollover()) {
-                    g2.setColor(hoverBg); // Kolor przy najechaniu
+                    g2.setColor(hoverBg);
                 } else {
-                    g2.setColor(normalBg); // Domyślny kolor
+                    g2.setColor(normalBg);
                 }
                 g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tekstu
                 FontMetrics metrics = g2.getFontMetrics(getFont());
                 int x = (width - metrics.stringWidth(getText())) / 2;
                 int y = ((height - metrics.getHeight()) / 2) + metrics.getAscent();
@@ -221,7 +205,7 @@ public class EditRoomDialog extends JDialog {
 
             @Override
             public void paintBorder(Graphics g) {
-                // Nie rysujemy domyślnego obramowania
+
             }
 
             @Override
@@ -282,7 +266,6 @@ public class EditRoomDialog extends JDialog {
                 return false;
             }
 
-            // Apply changes only if they are different
             boolean changed = false;
             if (!roomToEdit.getName().equals(newName)) {
                 roomToEdit.setName(newName);
@@ -301,7 +284,6 @@ public class EditRoomDialog extends JDialog {
                 changed = true;
             }
 
-            // Ustaw `updated` na true tylko jeśli faktycznie nastąpiła jakaś zmiana
             this.updated = changed;
             return true;
         } catch (NumberFormatException ex) {
