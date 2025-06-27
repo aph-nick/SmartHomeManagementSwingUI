@@ -8,7 +8,7 @@ import House.SmartHomeSystem;
 import Logger.DeviceLogger;
 import SmartExceptions.DeviceDisabled;
 import SmartExceptions.SimulationInterrupted;
-import Interfaces.*; // Upewnij się, że masz ten import, jeśli korzystasz z interfejsów Switchable, Pluggable itp.
+import Interfaces.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -26,7 +26,6 @@ public class ManageDevicesPanel extends JPanel {
     private final ManageRoomsPanel backPanel;
     private final Room selectedRoom;
 
-    // Komponenty GUI
     private JLabel roomNameLabel;
     private JButton addDeviceButton;
     private JButton controlDeviceButton;
@@ -36,12 +35,11 @@ public class ManageDevicesPanel extends JPanel {
     private JButton backButton;
     private JLabel statusLabel;
 
-    // --- Kolory do schematu UI (powtórzone dla samodzielności klasy) ---
-    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Stalowo-niebieski
-    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); // Alice Blue (jasny)
-    private static final Color ACCENT_COLOR = new Color(100, 149, 237); // Cornflower Blue
-    private static final Color TEXT_COLOR = new Color(40, 40, 40); // Ciemny szary
-    private static final Color BORDER_COLOR = new Color(170, 170, 170); // Szary do obramowań
+    private static final Color PRIMARY_COLOR = new Color(70, 130, 180);
+    private static final Color SECONDARY_COLOR = new Color(240, 248, 255);
+    private static final Color ACCENT_COLOR = new Color(100, 149, 237);
+    private static final Color TEXT_COLOR = new Color(40, 40, 40);
+    private static final Color BORDER_COLOR = new Color(170, 170, 170);
 
 
     public ManageDevicesPanel(SmartHomeSystem system, SmartHomeGUI parentFrame, ManageRoomsPanel backPanel, Room selectedRoom) {
@@ -50,10 +48,8 @@ public class ManageDevicesPanel extends JPanel {
         this.backPanel = backPanel;
         this.selectedRoom = selectedRoom;
 
-        // Upewnij się, że ta klasa jest w stanie obsłużyć brak wybranego pokoju
         if (selectedRoom == null) {
             JOptionPane.showMessageDialog(this, "No room selected. Returning to room management.", "Error", JOptionPane.ERROR_MESSAGE);
-            // Wywołaj showPanel na EDT
             SwingUtilities.invokeLater(() -> parentFrame.showPanel(backPanel));
             return;
         }
@@ -62,40 +58,37 @@ public class ManageDevicesPanel extends JPanel {
     }
 
     private void initializeUI() {
-        // Zmieniamy na GridBagLayout dla większej elastyczności
         setLayout(new GridBagLayout());
-        setBackground(SECONDARY_COLOR); // Ustawienie tła panelu
-        setBorder(new EmptyBorder(40, 50, 40, 50)); // Dodatkowy padding wokół panelu
+        setBackground(SECONDARY_COLOR);
+        setBorder(new EmptyBorder(40, 50, 40, 50));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 10, 15, 10); // Większe marginesy między komponentami
+        gbc.insets = new Insets(15, 10, 15, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0; // Rozciągnij komponenty w poziomie
+        gbc.weightx = 1.0;
 
         Font titleFont = new Font("Segoe UI", Font.BOLD, 36);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 24);
         Font statusFont = new Font("Segoe UI", Font.ITALIC, 20);
 
-        // Room Name Label
         roomNameLabel = new JLabel("Devices in: " + selectedRoom.getName(), SwingConstants.CENTER);
         roomNameLabel.setFont(titleFont);
-        roomNameLabel.setForeground(PRIMARY_COLOR.darker()); // Używamy ciemniejszego primary color
+        roomNameLabel.setForeground(PRIMARY_COLOR.darker());
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 1; // Zajmuje całą szerokość w pojedynczej kolumnie
-        gbc.ipady = 20; // Internal padding vertical
+        gbc.gridwidth = 1;
+        gbc.ipady = 20;
         add(roomNameLabel, gbc);
 
-        gbc.ipady = 10; // Resetuj padding pionowy dla przycisków
+        gbc.ipady = 10;
 
-        // Przyciski (używamy createStyledButton)
         addDeviceButton = createStyledButton("1. Add Device", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         controlDeviceButton = createStyledButton("2. Control Device", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         controlAllDevicesButton = createStyledButton("3. Control All Devices in Room", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         removeDeviceButton = createStyledButton("4. Remove Device", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         listDevicesButton = createStyledButton("5. List Devices", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
-        backButton = createStyledButton("6. Back to Room Management", buttonFont, Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE); // Inny kolor dla przycisku Wstecz
+        backButton = createStyledButton("6. Back to Room Management", buttonFont, Color.GRAY, Color.DARK_GRAY.brighter(), Color.WHITE);
 
         gbc.gridy = 1; add(addDeviceButton, gbc);
         gbc.gridy = 2; add(controlDeviceButton, gbc);
@@ -104,16 +97,14 @@ public class ManageDevicesPanel extends JPanel {
         gbc.gridy = 5; add(listDevicesButton, gbc);
         gbc.gridy = 6; add(backButton, gbc);
 
-        // Status Label
         statusLabel = new JLabel("Manage devices for " + selectedRoom.getName(), SwingConstants.CENTER);
         statusLabel.setFont(statusFont);
         statusLabel.setForeground(TEXT_COLOR);
 
         gbc.gridy = 7;
-        gbc.ipady = 15; // Trochę więcej paddingu dla statusu
+        gbc.ipady = 15;
         add(statusLabel, gbc);
 
-        // Dodanie słuchaczy zdarzeń
         addDeviceButton.addActionListener(e -> addDevice());
         controlDeviceButton.addActionListener(e -> controlDevice());
         controlAllDevicesButton.addActionListener(e -> controlAllDevices());
@@ -122,15 +113,12 @@ public class ManageDevicesPanel extends JPanel {
         backButton.addActionListener(e -> parentFrame.showPanel(backPanel));
     }
 
-    // --- Metody obsługujące akcje ---
-
     private void addDevice() {
         String[] deviceTypes = {
                 "Ambient Lighting", "HVAC", "Lightbulb", "Movement Sensor",
                 "Outlet", "Smart Clock", "Smart Vacuum Cleaner", "Temperature Sensor"
         };
 
-        // Stylowanie komponentów w dialogu
         Font dialogInputFont = new Font("Segoe UI", Font.PLAIN, 18);
         Font dialogLabelFont = new Font("Segoe UI", Font.BOLD, 18);
 
@@ -153,7 +141,7 @@ public class ManageDevicesPanel extends JPanel {
         ));
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(SECONDARY_COLOR); // Tło panelu dialogu
+        panel.setBackground(SECONDARY_COLOR);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -174,7 +162,6 @@ public class ManageDevicesPanel extends JPanel {
         gbc.gridx = 1;
         panel.add(deviceTypeComboBox, gbc);
 
-        // Ustawienie opcji dla JOptionPane dla lepszego wyglądu
         UIManager.put("OptionPane.background", SECONDARY_COLOR);
         UIManager.put("Panel.background", SECONDARY_COLOR);
         UIManager.put("OptionPane.messageFont", dialogInputFont);
@@ -183,7 +170,6 @@ public class ManageDevicesPanel extends JPanel {
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Add New Device", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        // Przywróć domyślne style JOptionPane, jeśli to konieczne, choć dla prostych dialogów może to być pomijalne
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageFont", null);
@@ -239,7 +225,7 @@ public class ManageDevicesPanel extends JPanel {
                         newDevice = new SmartClock(name);
                         break;
                     case "Smart Vacuum Cleaner":
-                        newDevice = new SmartVacuumCleaner(name, null); // Outlet jest wybierany później
+                        newDevice = new SmartVacuumCleaner(name, null);
                         break;
                     case "Temperature Sensor":
                         newDevice = new TemperatureSensor(name);
@@ -266,8 +252,6 @@ public class ManageDevicesPanel extends JPanel {
     }
 
 
-    // Helper methods for picking specific devices from ANY room in the house
-    // (Stylizacja tych dialogów również musi być spójna)
     private TemperatureSensor pickTemperatureSensor(List<Room> allRoomsInHouse) {
         List<TemperatureSensor> tempSensors = allRoomsInHouse.stream()
                 .flatMap(r -> r.getDevices().stream())
@@ -287,10 +271,10 @@ public class ManageDevicesPanel extends JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                label.setFont(dialogInputFont); // Ustaw czcionkę
-                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Dodaj padding
+                label.setFont(dialogInputFont);
+                label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
                 if (isSelected) {
-                    label.setBackground(ACCENT_COLOR); // Kolor zaznaczenia
+                    label.setBackground(ACCENT_COLOR);
                     label.setForeground(Color.WHITE);
                 } else {
                     label.setBackground(Color.WHITE);
@@ -305,7 +289,7 @@ public class ManageDevicesPanel extends JPanel {
 
         JComboBox<TemperatureSensor> sensorComboBox = new JComboBox<>(tempSensors.toArray(new TemperatureSensor[0]));
         sensorComboBox.setRenderer(renderer);
-        sensorComboBox.setFont(dialogInputFont); // Ustaw czcionkę dla comboboxa
+        sensorComboBox.setFont(dialogInputFont);
         sensorComboBox.setBackground(Color.WHITE);
         sensorComboBox.setForeground(TEXT_COLOR);
         sensorComboBox.setBorder(BorderFactory.createCompoundBorder(
@@ -321,7 +305,6 @@ public class ManageDevicesPanel extends JPanel {
         panel.add(label, BorderLayout.NORTH);
         panel.add(sensorComboBox, BorderLayout.CENTER);
 
-        // Tymczasowe style dla JOptionPane
         UIManager.put("OptionPane.background", SECONDARY_COLOR);
         UIManager.put("Panel.background", SECONDARY_COLOR);
         UIManager.put("OptionPane.messageFont", dialogInputFont);
@@ -329,7 +312,6 @@ public class ManageDevicesPanel extends JPanel {
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Select Temperature Sensor", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-        // Przywróć domyślne style
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageFont", null);
@@ -418,7 +400,7 @@ public class ManageDevicesPanel extends JPanel {
                 .flatMap(r -> r.getDevices().stream())
                 .filter(d -> d instanceof Outlet)
                 .map(d -> (Outlet) d)
-                .filter(o -> o.getConnectedDevice() == null) // Tylko wolne gniazdka
+                .filter(o -> o.getConnectedDevice() == null)
                 .collect(Collectors.toList());
 
         if (outlets.isEmpty()) {
@@ -617,7 +599,6 @@ public class ManageDevicesPanel extends JPanel {
             return;
         }
 
-        // Stylowanie przycisków w JOptionPane
         UIManager.put("OptionPane.background", SECONDARY_COLOR);
         UIManager.put("Panel.background", SECONDARY_COLOR);
         UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 18));
@@ -635,14 +616,13 @@ public class ManageDevicesPanel extends JPanel {
                 options,
                 options[0]);
 
-        // Przywracanie domyślnych stylów
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageFont", null);
         UIManager.put("OptionPane.buttonFont", null);
 
         switch (choice) {
-            case 0: // Turn ON All
+            case 0:
                 for (SmartDevice device : devices) {
                     try {
                         if (device instanceof Switchable switchableDevice) {
@@ -658,7 +638,7 @@ public class ManageDevicesPanel extends JPanel {
                 }
                 statusLabel.setText("Attempted to turn ON all devices in " + selectedRoom.getName() + ".");
                 break;
-            case 1: // Turn OFF All
+            case 1:
                 for (SmartDevice device : devices) {
                     try {
                         if (device instanceof Switchable switchableDevice) {
@@ -674,44 +654,49 @@ public class ManageDevicesPanel extends JPanel {
                 }
                 statusLabel.setText("Attempted to turn OFF all devices in " + selectedRoom.getName() + ".");
                 break;
-            case 2: // Start Simulation All
+            case 2:
                 for (SmartDevice device : devices) {
                     try {
-                        device.simulate();
-                        DeviceLogger.logEvent(device, "SIMULATION_STATUS", "Simulation started");
-                    } catch (DeviceDisabled e) {
-                        DeviceLogger.logEvent(device, "SIMULATION_ERROR", "Device disabled: " + e.getMessage());
-                    } catch (SimulationInterrupted e) {
-                        DeviceLogger.logEvent(device, "SIMULATION_ERROR", "Simulation interrupted: " + e.getMessage());
-                    } catch (UnsupportedOperationException e) {
-                        DeviceLogger.logEvent(device, "SIMULATION_WARNING", "Simulation not supported for this device type.");
-                    } catch (Exception e) {
-                        DeviceLogger.logEvent(device, "SIMULATION_ERROR", "Error starting simulation: " + e.getMessage());
+                        if (device instanceof Simulated simulatedDevice) {
+                            simulatedDevice.startSimulation();
+                        } else {
+                            JOptionPane.showMessageDialog(this, device.getName() + " does not support simulation.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (SimulationInterrupted | DeviceDisabled ex) {
+                        DeviceLogger.logEvent(device, "WARNING", "Could not start simulation for " + device.getName() + ": " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Could not start simulation for " + device.getName() + ": " + ex.getMessage(), "Simulation Error", JOptionPane.WARNING_MESSAGE);
+                    } catch (Exception ex) {
+                        DeviceLogger.logEvent(device, "ERROR", "Unexpected error starting simulation for " + device.getName() + ": " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Unexpected error starting simulation for " + device.getName() + ": " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                statusLabel.setText("Simulation started for all supported devices in " + selectedRoom.getName() + ".");
-                JOptionPane.showMessageDialog(this, "Check log for individual simulation statuses.", "Simulation Info", JOptionPane.INFORMATION_MESSAGE);
+                statusLabel.setText("Attempted to start simulation for all devices in " + selectedRoom.getName() + ".");
                 break;
-            case 3: // Stop Simulation All
+            case 3:
                 for (SmartDevice device : devices) {
                     try {
-                        device.stopSimulation();
-                        DeviceLogger.logEvent(device, "SIMULATION_STATUS", "Simulation stopped");
-                    } catch (UnsupportedOperationException e) {
-                        DeviceLogger.logEvent(device, "SIMULATION_WARNING", "Stop simulation not supported for this device type.");
-                    } catch (Exception e) {
-                        DeviceLogger.logEvent(device, "SIMULATION_ERROR", "Error stopping simulation: " + e.getMessage());
+                        if (device instanceof Simulated simulatedDevice) {
+                            simulatedDevice.stopSimulation();
+                        } else {
+                            JOptionPane.showMessageDialog(this, device.getName() + " does not support simulation.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (SimulationInterrupted | DeviceDisabled ex) {
+                        DeviceLogger.logEvent(device, "WARNING", "Could not stop simulation for " + device.getName() + ": " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Could not stop simulation for " + device.getName() + ": " + ex.getMessage(), "Simulation Error", JOptionPane.WARNING_MESSAGE);
+                    } catch (Exception ex) {
+                        DeviceLogger.logEvent(device, "ERROR", "Unexpected error stopping simulation for " + device.getName() + ": " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Unexpected error stopping simulation for " + device.getName() + ": " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                statusLabel.setText("Simulation stopped for all supported devices in " + selectedRoom.getName() + ".");
-                JOptionPane.showMessageDialog(this, "Check log for individual simulation statuses.", "Simulation Info", JOptionPane.INFORMATION_MESSAGE);
+                statusLabel.setText("Attempted to stop simulation for all devices in " + selectedRoom.getName() + ".");
                 break;
-            case 4: // Cancel
-            case JOptionPane.CLOSED_OPTION:
+            case 4:
+            default:
                 statusLabel.setText("Control All Devices operation cancelled.");
                 break;
         }
     }
+
 
     private void removeDevice() {
         List<SmartDevice> devices = selectedRoom.getDevices();
@@ -743,6 +728,7 @@ public class ManageDevicesPanel extends JPanel {
                 return label;
             }
         };
+
         JComboBox<SmartDevice> deviceComboBox = new JComboBox<>(devices.toArray(new SmartDevice[0]));
         deviceComboBox.setRenderer(renderer);
         deviceComboBox.setFont(dialogInputFont);
@@ -766,6 +752,7 @@ public class ManageDevicesPanel extends JPanel {
         UIManager.put("OptionPane.messageFont", dialogInputFont);
         UIManager.put("OptionPane.buttonFont", new Font("Segoe UI", Font.BOLD, 16));
 
+
         int result = JOptionPane.showConfirmDialog(
                 this,
                 panel,
@@ -778,176 +765,131 @@ public class ManageDevicesPanel extends JPanel {
         UIManager.put("OptionPane.messageFont", null);
         UIManager.put("OptionPane.buttonFont", null);
 
+
         if (result == JOptionPane.OK_OPTION) {
             SmartDevice deviceToRemove = (SmartDevice) deviceComboBox.getSelectedItem();
-
             if (deviceToRemove != null) {
-                // Konfirmacja usunięcia
-                int confirmResult = JOptionPane.showConfirmDialog(this,
-                        "Are you sure you want to remove device '" + deviceToRemove.getName() + "'?",
-                        "Confirm Removal",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-
-                if (confirmResult == JOptionPane.YES_OPTION) {
-                    // Odłącz urządzenie od gniazdka, jeśli jest podłączone
-                    if (deviceToRemove instanceof Pluggable pluggableDevice) {
-                        Outlet connectedOutlet = pluggableDevice.getOutlet();
-                        if (connectedOutlet != null) {
-                            pluggableDevice.disconnectFromOutlet(connectedOutlet);
-                            DeviceLogger.logEvent(deviceToRemove, "CONNECTION", "Disconnected from outlet during removal.");
-                        }
-                    }
-                    // Zatrzymaj symulację przed usunięciem
-                    try {
-                        deviceToRemove.stopSimulation();
-                    } catch (UnsupportedOperationException e) {
-                        // Ignoruj, jeśli urządzenie nie obsługuje symulacji
-                    }
-
-                    selectedRoom.removeDevice(deviceToRemove);
-                    statusLabel.setText("Device '" + deviceToRemove.getName() + "' removed successfully from room '" + selectedRoom.getName() + "'.");
-                    DeviceLogger.logEvent(deviceToRemove, "DEVICE_REMOVED", "Device has been removed.");
+                if (selectedRoom.removeDevice(deviceToRemove)) {
+                    statusLabel.setText("Device '" + deviceToRemove.getName() + "' removed from room " + selectedRoom.getName() + ".");
+                    DeviceLogger.logDeviceRemoved(deviceToRemove);
                 } else {
-                    statusLabel.setText("Device removal cancelled.");
+                    statusLabel.setText("Failed to remove device '" + deviceToRemove.getName() + "'.");
+                    JOptionPane.showMessageDialog(this, "Failed to remove device '" + deviceToRemove.getName() + "'.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } else {
-            statusLabel.setText("Device selection cancelled.");
+            statusLabel.setText("Remove Device operation cancelled.");
         }
     }
-
 
     private void listDevices() {
         List<SmartDevice> devices = selectedRoom.getDevices();
         if (devices.isEmpty()) {
-            statusLabel.setText("No devices in room '" + selectedRoom.getName() + "'.");
+            statusLabel.setText("No devices in this room.");
             JOptionPane.showMessageDialog(this, "No devices in room '" + selectedRoom.getName() + "'.", "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        StringBuilder sb = new StringBuilder("Devices in room '" + selectedRoom.getName() + "':\n\n");
-        for (int i = 0; i < devices.size(); i++) {
-            SmartDevice device = devices.get(i);
-            sb.append((i + 1)).append(". Name: ").append(device.getName()).append("\n")
-                    .append("   Type: ").append(device.getDeviceType()).append("\n")
-                    .append("   ID: ").append(device.getId()).append("\n")
-                    .append("   Status: ").append(device.isOn() ? "On" : "Off").append("\n");
+        StringBuilder deviceList = new StringBuilder("Devices in " + selectedRoom.getName() + ":\n\n");
+        for (SmartDevice device : devices) {
+            deviceList.append("- ").append(device.getName())
+                    .append(" (Type: ").append(device.getDeviceType())
+                    .append(", Status: ").append(device.getStatus());
 
-            sb.append("\n");
+            if (device instanceof Pluggable pluggable) {
+                deviceList.append(", Plugged: ").append(pluggable.isPluggedIn() ? "Yes" : "No");
+            }
+            if (device instanceof PowerConsuming pc) {
+                deviceList.append(", Power: ").append(pc.getCurrentPowerConsumption()).append("W");
+            }
+            if (device instanceof Switchable sw) {
+                deviceList.append(", Is On: ").append(sw.isOn() ? "Yes" : "No");
+            }
+            if (device instanceof Dimmable dim) {
+                deviceList.append(", Brightness: ").append(dim.getBrightness()).append("%");
+            }
+            if (device instanceof TemperatureSensor ts) {
+                deviceList.append(", Current Temp: ").append(ts.getCurrentTemperature()).append("°C");
+            }
+            if (device instanceof HVAC hvac) {
+                deviceList.append(", Target Temp: ").append(hvac.getTargetTemperature()).append("°C");
+            }
+            if (device instanceof MovementSensor ms) {
+                deviceList.append(", Sensor Type: ").append(ms.getSensorType());
+            }
+
+            deviceList.append(")\n");
         }
-        statusLabel.setText("Devices listed for room '" + selectedRoom.getName() + "'.");
 
-        JTextArea textArea = new JTextArea(sb.toString());
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 16));
+        JTextArea textArea = new JTextArea(deviceList.toString());
+        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         textArea.setEditable(false);
-        textArea.setBackground(SECONDARY_COLOR.brighter()); // Jasne tło dla text area
-        textArea.setForeground(TEXT_COLOR); // Ciemny tekst
+        textArea.setBackground(SECONDARY_COLOR);
+        textArea.setForeground(TEXT_COLOR);
+        textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setPreferredSize(new Dimension(850, 850));
-        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1)); // Delikatne obramowanie
+        scrollPane.setPreferredSize(new Dimension(500, 400));
+        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
 
-        // Stylowanie JOptionPane dla wyświetlania listy
         UIManager.put("OptionPane.background", SECONDARY_COLOR);
         UIManager.put("Panel.background", SECONDARY_COLOR);
-        UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 16));
+        UIManager.put("OptionPane.messageFont", new Font("Segoe UI", Font.PLAIN, 18));
         UIManager.put("OptionPane.buttonFont", new Font("Segoe UI", Font.BOLD, 16));
 
         JOptionPane.showMessageDialog(this, scrollPane, "Devices in " + selectedRoom.getName(), JOptionPane.PLAIN_MESSAGE);
 
-        // Przywracanie domyślnych stylów
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageFont", null);
         UIManager.put("OptionPane.buttonFont", null);
+
+        statusLabel.setText("Listed devices in " + selectedRoom.getName() + ".");
     }
 
-    // --- Metoda pomocnicza do tworzenia stylizowanych przycisków ---
-    // (Przeniesiona z innych klas GUI, aby zapewnić spójność)
-    private JButton createStyledButton(String text, Font font, Color normalBg, Color hoverBg, Color textCol) {
-        JButton button = new JButton(text) {
-            private final int CORNER_RADIUS = 20; // Stały promień zaokrąglenia
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                int width = getWidth();
-                int height = getHeight();
-
-                // Rysowanie cienia
-                int shadowOffset = 3;
-                Color shadowColor = new Color(0, 0, 0, 40);
-                if (getModel().isPressed()) {
-                    shadowColor = new Color(0, 0, 0, 80);
-                    shadowOffset = 2;
-                }
-                g2.setColor(shadowColor);
-                g2.fillRoundRect(shadowOffset, shadowOffset, width - shadowOffset, height - shadowOffset, CORNER_RADIUS, CORNER_RADIUS);
-
-                // Rysowanie tła przycisku
-                if (getModel().isRollover()) {
-                    g2.setColor(hoverBg); // Kolor przy najechaniu
-                } else {
-                    g2.setColor(normalBg); // Domyślny kolor
-                }
-                g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
-
-                // Rysowanie tekstu
-                FontMetrics metrics = g2.getFontMetrics(getFont());
-                int x = (width - metrics.stringWidth(getText())) / 2;
-                int y = ((height - metrics.getHeight()) / 2) + metrics.getAscent();
-                g2.setColor(textCol);
-                g2.setFont(getFont());
-                g2.drawString(getText(), x, y);
-
-                g2.dispose();
-            }
-
-            @Override
-            public void paintBorder(Graphics g) {
-                // Nie rysujemy domyślnego obramowania
-            }
-
-            @Override
-            public boolean contains(int x, int y) {
-                Shape shape = new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), CORNER_RADIUS, CORNER_RADIUS);
-                return shape.contains(x, y);
-            }
-        };
-
+    private JButton createStyledButton(String text, Font font, Color bgColor, Color hoverColor, Color textColor) {
+        JButton button = new JButton(text);
         button.setFont(font);
-        button.setForeground(textCol);
+        button.setBackground(bgColor);
+        button.setForeground(textColor);
         button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
+        button.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.repaint();
+                button.setBackground(hoverColor);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.repaint();
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                button.repaint();
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                button.repaint();
+                button.setBackground(bgColor);
             }
         });
 
         return button;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int width = getWidth();
+        int height = getHeight();
+        int arc = 40;
+
+        RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(0, 0, width - 1, height - 1, arc, arc);
+
+        g2d.setColor(SECONDARY_COLOR);
+        g2d.fill(roundedRectangle);
+
+        g2d.setColor(BORDER_COLOR);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.draw(roundedRectangle);
+
+        g2d.dispose();
     }
 }
