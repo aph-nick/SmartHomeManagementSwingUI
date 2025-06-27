@@ -23,29 +23,25 @@ public class ControlDeviceDialog extends JDialog {
     private JButton stopSimulateButton;
     private JButton openDeviceMenuButton;
 
-    // DODANA ZMIENNA: Lista wszystkich urządzeń w systemie
     private List<SmartDevice> allSystemDevices;
 
-    // --- Kolory do schematu UI (powtórzone dla samodzielności klasy) ---
-    private static final Color PRIMARY_COLOR = new Color(70, 130, 180); // Stalowo-niebieski
-    private static final Color SECONDARY_COLOR = new Color(240, 248, 255); // Alice Blue (jasny)
-    private static final Color ACCENT_COLOR = new Color(100, 149, 237); // Cornflower Blue
-    private static final Color TEXT_COLOR = new Color(40, 40, 40); // Ciemny szary
-    private static final Color BORDER_COLOR = new Color(170, 170, 170); // Szary do obramowań
+    private static final Color PRIMARY_COLOR = new Color(70, 130, 180);
+    private static final Color SECONDARY_COLOR = new Color(240, 248, 255);
+    private static final Color ACCENT_COLOR = new Color(100, 149, 237);
+    private static final Color TEXT_COLOR = new Color(40, 40, 40);
+    private static final Color BORDER_COLOR = new Color(170, 170, 170);
 
-    // Zmieniony konstruktor: teraz przyjmuje również listę wszystkich urządzeń
     public ControlDeviceDialog(JFrame parent, SmartDevice device, List<SmartDevice> allSystemDevices) {
         super(parent, "Control Device: " + device.getName(), true);
         this.device = device;
-        this.allSystemDevices = allSystemDevices; // Inicjalizacja listy
+        this.allSystemDevices = allSystemDevices;
 
-        // Zwiększony rozmiar dialogu
-        setSize(850, 850); // Większy rozmiar
-        setMinimumSize(new Dimension(500, 400)); // Minimalny rozmiar
+        setSize(850, 850);
+        setMinimumSize(new Dimension(500, 400));
 
-        setLayout(new BorderLayout(20, 20)); // Zwiększone marginesy
+        setLayout(new BorderLayout(20, 20));
         setLocationRelativeTo(parent);
-        getContentPane().setBackground(SECONDARY_COLOR); // Tło dialogu
+        getContentPane().setBackground(SECONDARY_COLOR);
 
         initComponents();
         createLayout();
@@ -59,18 +55,16 @@ public class ControlDeviceDialog extends JDialog {
 
         deviceNameLabel = new JLabel("Device: " + device.getName(), SwingConstants.CENTER);
         deviceNameLabel.setFont(titleFont);
-        deviceNameLabel.setForeground(PRIMARY_COLOR.darker()); // Ciemniejszy odcień primary color
+        deviceNameLabel.setForeground(PRIMARY_COLOR.darker());
 
         statusLabel = new JLabel("Status: " + device.getStatus() + " | ID: " + device.getId(), SwingConstants.CENTER);
         statusLabel.setFont(statusFont);
         statusLabel.setForeground(TEXT_COLOR);
 
-        // Używamy metody createStyledButton dla wszystkich przycisków
         togglePowerButton = createStyledButton(device.isOn() ? "Turn OFF" : "Turn ON", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         simulateButton = createStyledButton("Start Simulation", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         stopSimulateButton = createStyledButton("Stop Simulation", buttonFont, PRIMARY_COLOR, ACCENT_COLOR, Color.WHITE);
         openDeviceMenuButton = createStyledButton("Open Device Specific Menu", buttonFont, PRIMARY_COLOR.darker(), ACCENT_COLOR.darker(), Color.WHITE);
-        // Ostatni przycisk z innym kolorem, aby się wyróżniał
 
         togglePowerButton.addActionListener(e -> togglePower());
         simulateButton.addActionListener(e -> startSimulation());
@@ -80,16 +74,16 @@ public class ControlDeviceDialog extends JDialog {
 
     private void createLayout() {
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(SECONDARY_COLOR); // Ustawienie tła panelu nagłówka
-        headerPanel.setBorder(new EmptyBorder(15, 15, 15, 15)); // Dodatkowe marginesy
+        headerPanel.setBackground(SECONDARY_COLOR);
+        headerPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         headerPanel.add(deviceNameLabel, BorderLayout.NORTH);
         headerPanel.add(statusLabel, BorderLayout.CENTER);
         add(headerPanel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 15, 15)); // Zwiększone odstępy między przyciskami
-        buttonPanel.setBackground(SECONDARY_COLOR); // Ustawienie tła panelu przycisków
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40)); // Zwiększone marginesy
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 15, 15));
+        buttonPanel.setBackground(SECONDARY_COLOR);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
         buttonPanel.add(togglePowerButton);
         buttonPanel.add(simulateButton);
@@ -101,7 +95,6 @@ public class ControlDeviceDialog extends JDialog {
 
     private void updateStatusDisplay() {
         statusLabel.setText("Status: " + device.getStatus() + " | ID: " + device.getId());
-        // Zaktualizuj tekst przycisku po zmianie statusu
         togglePowerButton.setText(device.isOn() ? "Turn OFF" : "Turn ON");
     }
 
@@ -120,8 +113,6 @@ public class ControlDeviceDialog extends JDialog {
         } catch (DeviceDisabled e) {
             JOptionPane.showMessageDialog(this, "Device is disabled and cannot be simulated: " + e.getMessage(), "Simulation Error", JOptionPane.ERROR_MESSAGE);
         } catch (SimulationInterrupted e) {
-            // Tutaj możesz zdecydować, czy chcesz pokazać wiadomość o przerwaniu symulacji.
-            // Jeśli symulacja jest przerywana z powodu wewnętrznej logiki, może to być informacja dla użytkownika.
             JOptionPane.showMessageDialog(this, "Simulation interrupted for " + device.getName() + ": " + e.getMessage(), "Simulation Interrupted", JOptionPane.WARNING_MESSAGE);
         } catch (UnsupportedOperationException e) {
             JOptionPane.showMessageDialog(this, "This device does not support simulation.", "Simulation Not Supported", JOptionPane.WARNING_MESSAGE);
@@ -140,17 +131,13 @@ public class ControlDeviceDialog extends JDialog {
     }
 
     private void openDeviceSpecificMenu() {
-        // Prawidłowe wywołanie showDeviceSpecificGUI
-        // 1. parentFrame: Rzutujemy getParent() na JFrame.
-        // 2. allSystemDevices: Używamy przechowywanej listy allSystemDevices.
         device.showDeviceSpecificGUI((JFrame) getParent(), allSystemDevices);
-        updateStatusDisplay(); // Zaktualizuj status po powrocie z menu urządzenia
+        updateStatusDisplay();
     }
 
-    // --- Metoda pomocnicza do tworzenia stylizowanych przycisków (przeniesiona z AddHouseDialog) ---
     private JButton createStyledButton(String text, Font font, Color normalBg, Color hoverBg, Color textCol) {
         JButton button = new JButton(text) {
-            private final int CORNER_RADIUS = 20; // Stały promień zaokrąglenia
+            private final int CORNER_RADIUS = 20;
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -161,7 +148,6 @@ public class ControlDeviceDialog extends JDialog {
                 int width = getWidth();
                 int height = getHeight();
 
-                // Rysowanie cienia
                 int shadowOffset = 3;
                 Color shadowColor = new Color(0, 0, 0, 40);
                 if (getModel().isPressed()) {
@@ -171,15 +157,13 @@ public class ControlDeviceDialog extends JDialog {
                 g2.setColor(shadowColor);
                 g2.fillRoundRect(shadowOffset, shadowOffset, width - shadowOffset, height - shadowOffset, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tła przycisku
                 if (getModel().isRollover()) {
-                    g2.setColor(hoverBg); // Kolor przy najechaniu
+                    g2.setColor(hoverBg);
                 } else {
-                    g2.setColor(normalBg); // Domyślny kolor
+                    g2.setColor(normalBg);
                 }
                 g2.fillRoundRect(0, 0, width - 1, height - 1, CORNER_RADIUS, CORNER_RADIUS);
 
-                // Rysowanie tekstu
                 FontMetrics metrics = g2.getFontMetrics(getFont());
                 int x = (width - metrics.stringWidth(getText())) / 2;
                 int y = ((height - metrics.getHeight()) / 2) + metrics.getAscent();
@@ -192,7 +176,7 @@ public class ControlDeviceDialog extends JDialog {
 
             @Override
             public void paintBorder(Graphics g) {
-                // Nie rysujemy domyślnego obramowania
+
             }
 
             @Override
