@@ -1,46 +1,79 @@
-🏡 Smart Home Management System
-
+# 🏡 Smart Home Management System
 
 ![79d83e72-06df-439d-a53e-369b23c00fea](https://github.com/user-attachments/assets/b8f30882-8a69-45b1-9ab8-315abe73d391)
 
-Opis Projektu
+## 📘 Opis Projektu
 
-Projekt Smart Home Management System to aplikacja symulująca system zarządzania inteligentnym domem, umożliwiająca użytkownikom kontrolę nad urządzeniami, tworzenie automatycznych reguł oraz monitorowanie i rejestrowanie zmian. Pierwotnie projekt został zaimplementowany z interfejsem tekstowym (CLI), jednak w obecnej wersji został przebudowany z graficznym interfejsem użytkownika (GUI) opartym na bibliotece Swing, co zapewnia bardziej intuicyjną interakcję.
+**Smart Home Management System** to aplikacja symulująca system zarządzania inteligentnym domem. Umożliwia użytkownikom:
 
-Główne Funkcjonalności
+- kontrolę nad urządzeniami,
+- tworzenie automatycznych reguł,
+- monitorowanie i rejestrowanie zmian w czasie rzeczywistym.
 
-    Zarządzanie strukturą domu: Definiowanie domów z podstawowymi cechami (nazwa, lokalizacja) oraz dodawanie do nich wielu pomieszczeń (pokoi) z określonym typem i listą urządzeń.
+Projekt został pierwotnie zaimplementowany jako aplikacja CLI (Command Line Interface), jednak obecna wersja wykorzystuje **graficzny interfejs użytkownika (GUI)** oparty na bibliotece **Swing**, co zapewnia bardziej intuicyjną obsługę.
 
-    Zarządzanie urządzeniami: Dodawanie, usuwanie i edycja różnego typu urządzeń (np. światła, termostaty, czujniki ruchu, zamki) w poszczególnych pomieszczeniach.
+---
 
-    Sterowanie urządzeniami: Możliwość zmiany statusu urządzeń (np. ON/OFF), sprawdzania ich aktualnego stanu oraz grupowego sterowania (np. włączanie wszystkich urządzeń w danym pokoju).
+## 🚀 Główne Funkcjonalności
 
-    Automatyczne reguły: Tworzenie reguł automatyzacji z warunkami logicznymi (np. "jeśli temperatura < X°C") i powiązanymi z nimi akcjami, z wykorzystaniem wyrażeń lambda.
+### 🏠 Zarządzanie strukturą domu
 
-    Symulacja działania: Symulowanie zmian stanu urządzeń (np. losowe odczyty czujników temperatury).
+- Tworzenie domów z nazwą i lokalizacją
+- Dodawanie pomieszczeń z określonym typem
+- Przypisywanie urządzeń do konkretnych pokoi
 
-    Logowanie zdarzeń: Rejestrowanie w czasie rzeczywistym wszystkich zdarzeń związanych ze zmianą stanu urządzeń do pliku tekstowego (TSV) z dokładnymi informacjami (TIMESTAMP, DEVICE_ID, DEVICE_TYPE, ROOM_NAME, EVENT_TYPE, DESCRIPTION). Generowanie zestawień z działania urządzeń (np. średnia temperatura, lista aktywnych urządzeń) z wykorzystaniem Stream API.
+### 🔌 Zarządzanie urządzeniami
 
-Technologia i Architektura
+- Dodawanie, edycja i usuwanie urządzeń:
+  - żarówki (Lightbulb)
+  - termostaty (Thermostat)
+  - czujniki ruchu (MotionSensor)
+  - zamki (Lock)
+- Przypisywanie urządzeń do konkretnych pomieszczeń
 
-Projekt został zrealizowany w Javie i bazuje na obiektowym podejściu. Kluczowe elementy architektury obejmują:
+### 🎛️ Sterowanie urządzeniami
 
-    Dziedziczenie i Polimorfizm: Wykorzystanie abstrakcyjnej klasy SmartDevice jako podstawy dla wszystkich urządzeń (np. Lightbulb, Outlet, TemperatureSensor)
+- Włączanie/wyłączanie urządzeń (ON/OFF)
+- Sprawdzanie aktualnego stanu
+- Grupowe sterowanie urządzeniami w obrębie pokoju
 
-    Interfejsy:
+### ⚙️ Automatyczne reguły
 
-        Switchable: Dla urządzeń, które mogą być włączane i wyłączane.
+- Tworzenie reguł opartych na warunkach logicznych (np. `jeśli temperatura < 18°C`)
+- Definiowanie akcji przy użyciu wyrażeń lambda
+- Obsługa warunków i akcji z wykorzystaniem `Predicate<T>` i `Consumer<T>`
 
-        SensorDevice<T>: Dla czujników, dostarczających dane generycznego typu (np. TemperatureSensor).
+### 🧪 Symulacja działania
 
-        ObservableDevice i DeviceObserver: Implementacja wzorca obserwatora do powiadamiania o zmianach stanu urządzeń.
+- Symulacja odczytów z czujników (np. losowe dane z `TemperatureSensor`)
+- Możliwość testowania reguł i reakcji systemu
 
-    Funkcyjne interfejsy: Wykorzystanie Predicate<T> i Consumer<T> do definiowania warunków i akcji w klasie Rule.
+### 📝 Logowanie zdarzeń
 
-    Logowanie: Dedykowana klasa do obsługi zapisu logów do pliku TSV, zapewniająca spójny format i aktualizację w czasie rzeczywistym.
+- Rejestrowanie zdarzeń do pliku `.tsv` z formatem:
+  TIMESTAMP DEVICE_ID DEVICE_TYPE ROOM_NAME EVENT_TYPE DESCRIPTION
 
-    Interfejs Użytkownika (GUI): Aplikacja posiada graficzny interfejs użytkownika zbudowany w oparciu o bibliotekę Java Swing, co pozwala na interaktywną obsługę systemu.
+---
 
+#### 👨‍👩‍👧‍👦 Dziedziczenie i Polimorfizm
+
+- Abstrakcyjna klasa `SmartDevice` jako baza
+
+#### 🧾 Logowanie
+
+- Dedykowana klasa do zapisu logów w czasie rzeczywistym
+- Format `TSV`, pełna zgodność i spójność danych
+
+---
+
+## 🖥️ Interfejs użytkownika (GUI)
+
+Aplikacja korzysta z biblioteki **Java Swing** i oferuje:
+
+- Przejrzysty, interaktywny interfejs graficzny
+- Obsługę zdarzeń z poziomu GUI
+- Szybką kontrolę i monitoring urządzeń
+  
 ![download](https://github.com/user-attachments/assets/b2d1cd99-ec06-4eaf-9987-b991755e0507)
 ![download](https://github.com/user-attachments/assets/5e18a075-a63d-4304-a366-e0a6428643ef)
 ![download](https://github.com/user-attachments/assets/7e713767-71dc-40b8-8e50-bc62afbb998f)
